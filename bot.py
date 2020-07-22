@@ -5,8 +5,11 @@ import discord
 from discord.ext import commands
 
 from database import Database
+from dotenv import load_dotenv
 
-TOKEN = "NzMwMjE1Mzk3ODAxOTg0MDMx.XwhvHA.ZSUpfkZfQOAIXhINuf--gOPjAAM"
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+
 bot = commands.Bot(command_prefix='!')
 data = Database("database.txt")
 
