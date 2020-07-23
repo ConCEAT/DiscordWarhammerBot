@@ -70,6 +70,41 @@ async def setAttribute(ctx, *pairs):
     response = f"Set attributes for **{ctx.author.nick}**:{logs}"
     await ctx.send(response)
 
+@bot.command(
+    name='delete',
+    help="""Delete your character attributes
+    You can specify many attributes separating them with spaces
+    If you need to use spaces inside attribute use double quotes outside this attribute
+    You can delete all your attributes using "--all" 
+""",
+    aliases=['del']
+)
+async def deleteAttribute(ctx, *attributes):
+    players = data.getPlayers()
+    playerID = str(ctx.author.id)
+    if playerID not in players.keys():
+        await ctx.send(f"There is no record of **{ctx.author.nick}** in database, sorry.")
+        return
+
+    if len(attributes) == 0:
+        await ctx.send(f"**{ctx.author.nick}**, you need to specify at least one attribute to delete")
+        return
+
+    if "--all" in attributes:
+        attributes = players[playerID].keys()
+    
+    logs = ""
+    for attribute in attributes:
+        if attribute not in players[playerID].keys():
+            logs += f"\nThere is no atrribute `{attribute}`"
+            continue
+        players[playerID].pop(attribute)
+        logs += f"\n{attribute}"
+    data.savePlayers(players)
+        
+    response = f"Deleted attributes for **{ctx.author.nick}**:{logs}"
+    await ctx.send(response)
+
 
 @bot.command(
     name='get',
@@ -91,7 +126,7 @@ async def getAttribute(ctx, *attributes):
 
     for attribute in attributes:
         if attribute not in players[playerID].keys():
-            logs += f"\nThere is no atrribute `{attribute}` for **{ctx.author.nick}**, sorry."
+            logs += f"\nThere is no atrribute `{attribute}`"
             continue
         value = players[playerID].get(attribute)
         logs += f"\n{attribute}: {value}"
