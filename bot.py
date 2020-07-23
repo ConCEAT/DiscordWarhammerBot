@@ -85,15 +85,17 @@ async def getAttribute(ctx, *attributes):
         await ctx.send(f"There is no record of **{ctx.author.nick}** in database, sorry.")
         return
 
+    player = players[playerID]
+
     logs = ""
     if len(attributes) == 0:
-        attributes = players[playerID].keys()
+        attributes = player.keys()
 
     for attribute in attributes:
-        if attribute not in players[playerID].keys():
+        if attribute not in player.keys():
             logs += f"\nThere is no atrribute `{attribute}` for **{ctx.author.nick}**, sorry."
             continue
-        value = players[playerID].get(attribute)
+        value = player.get(attribute)
         logs += f"\n{attribute}: {value}"
         
     response = f"**{ctx.author.nick}**'s attributes:{logs}"
