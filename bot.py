@@ -91,12 +91,12 @@ async def deleteAttribute(ctx, *attributes):
         return
 
     if "--all" in attributes:
-        attributes = players[playerID].keys()
+        attributes = list(players[playerID].keys())
     
     logs = ""
     for attribute in attributes:
         if attribute not in players[playerID].keys():
-            logs += f"\nThere is no atrribute `{attribute}`"
+            logs += f"\nThere is no atrribute `{attribute}` to delete"
             continue
         players[playerID].pop(attribute)
         logs += f"\n{attribute}"
