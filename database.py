@@ -1,14 +1,18 @@
+import os
+
 class Database:
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self, filepath):
+        self.filepath = filepath
+        if not os.path.exists(self.filepath):
+            open(self.filepath,'w').close()
 
     def _read(self):
-        with open(self.filename,'r') as source:
+        with open(self.filepath,'r') as source:
             database = source.readlines()
         return database
 
     def _write(self, context):
-        with open(self.filename,'w') as source:
+        with open(self.filepath,'w') as source:
             source.write(context)
 
     def getPlayers(self):

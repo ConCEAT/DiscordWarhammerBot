@@ -1,1 +1,0 @@
-439224572017901578;age:210;name:Otto;race:human;teeth:30;robot:True;class:fanatic

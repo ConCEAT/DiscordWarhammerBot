@@ -9,9 +9,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+DATABASE = os.getenv('DATABASE')
 
 bot = commands.Bot(command_prefix='!')
-data = Database("database.txt")
+data = Database(DATABASE)
 
 
 @bot.event
@@ -34,7 +35,7 @@ async def roll(ctx, dices="100"):
         numberOfDices, numberOfSides = 1, int(dices)
     rolls = [random.randint(0,numberOfSides - 1) for _ in range(numberOfDices)]
     results = ", ".join(map(str,rolls))
-    response = f'{ctx.author.mention} is rolling {dices}:\n`{results}`'
+    response = f'**{ctx.author.nick}** is rolling {dices}:\n`{results}`'
     await ctx.send(response)
 
 
@@ -56,7 +57,7 @@ async def setAttribute(ctx, *pairs):
         players[playerID] = {}
 
     if len(pairs) == 0:
-        await ctx.send(f"{ctx.author.mention}, you need to specify at least one pair `<attribute>:<value>`")
+        await ctx.send(f"**{ctx.author.nick}**, you need to specify at least one pair `<attribute>:<value>`")
         return
     
     logs = ""
@@ -66,9 +67,9 @@ async def setAttribute(ctx, *pairs):
             players[playerID][attribute] = value
             logs += f"\n{attribute}: {value}"
         except ValueError:
-            logs += f"\nUnable to set attribute's value for {pair}"
+            logs += f"\nUnable to set attribute's value for `{pair}`"
     data.savePlayers(players)
-    response = f"Set attributes for {ctx.author.mention}:`{logs}`"
+    response = f"Set attributes for **{ctx.author.nick}**:{logs}"
     await ctx.send(response)
 
 
@@ -83,7 +84,7 @@ async def getAttribute(ctx, *attributes):
     players = data.getPlayers()
     playerID = str(ctx.author.id)
     if playerID not in players.keys():
-        await ctx.send(f"There is no record of {author.mention} in database, sorry.")
+        await ctx.send(f"There is no record of **{ctx.author.nick}** in database, sorry.")
         return
 
     logs = ""
@@ -92,12 +93,12 @@ async def getAttribute(ctx, *attributes):
 
     for attribute in attributes:
         if attribute not in players[playerID].keys():
-            logs += f"`\nThere is no atrribute `{attribute}` for {ctx.author.nick}, sorry.`"
+            logs += f"\nThere is no atrribute `{attribute}` for **{ctx.author.nick}**, sorry."
             continue
         value = players[playerID].get(attribute)
         logs += f"\n{attribute}: {value}"
         
-    response = f"{ctx.author.mention}'s attributes:`{logs}`"
+    response = f"**{ctx.author.nick}**'s attributes:{logs}"
     await ctx.send(response)
 
 if __name__ == "__main__":
