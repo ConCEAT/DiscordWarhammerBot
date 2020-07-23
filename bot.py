@@ -8,11 +8,9 @@ from database import Database
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-DATABASE = os.getenv('DATABASE')
 
-bot = commands.Bot(command_prefix='!')
-data = Database(DATABASE)
+bot = commands.Bot(command_prefix=os.getenv('PREFIX'))
+data = Database(os.getenv('DATABASE'))
 
 
 @bot.event
@@ -102,4 +100,4 @@ async def getAttribute(ctx, *attributes):
     await ctx.send(response)
 
 if __name__ == "__main__":
-    bot.run(TOKEN)
+    bot.run(os.getenv('DISCORD_TOKEN'))
