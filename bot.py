@@ -8,8 +8,8 @@ from database import Database
 from dotenv import load_dotenv
 
 load_dotenv()
-
-bot = commands.Bot(command_prefix=os.getenv('PREFIX'))
+prefix = os.getenv('PREFIX')
+bot = commands.Bot(command_prefix=prefix)
 data = Database(os.getenv('DATABASE'))
 
 
@@ -20,11 +20,13 @@ async def on_ready():
 
 @bot.command(
     name='roll', 
-    help="""Simulate rolling dice.
-    Syntax: !r [NumberOfDices]d[NumberOfSides]
-         or !r [NumberOfSides] if you want to roll with one dice
-    Example: !r 2d10""",
-    aliases=['r']    
+    aliases=['r'],
+    usage='<NumberOfDices>d<NumberOfSides>',
+    help=f"""Simulate rolling dice
+    Syntax: {prefix}r <NumberOfDices>d<NumberOfSides>
+         or {prefix}r <NumberOfSides> if you want to roll with one dice
+         or {prefix}r if you want to roll one dice 100
+    Example: {prefix}r 2d10"""
 )
 async def roll(ctx, dices="100"):
     if "d" in dices:
@@ -39,14 +41,14 @@ async def roll(ctx, dices="100"):
 
 @bot.command(
     name='set',
-    help="""Set your character attribute's value
+    aliases=['s'],
+    usage='<attribute#1>:<value#1> <attribute#2>:<value#2>',
+    help=f"""Set your character attributes
     Separate <attribute> and <value> with colon
     You can specify many pairs separating them with spaces
-    If you need to use spaces inside attribute or value use double quotes outside this attribute/value
+    If you need to use spaces inside attribute or value put pair into double quotes
 
-    Syntax !s <attribute#1>:<value#1> <attribute#2>:<value#2>
-    Example: !s age:22 name:\"Adam Herling\"""",
-    aliases=['s']
+    Example: {prefix}s age:22 \"name:Hello Discord\""""
 )
 async def setAttribute(ctx, *pairs):
     players = data.getPlayers()
@@ -70,14 +72,17 @@ async def setAttribute(ctx, *pairs):
     response = f"Set attributes for **{ctx.author.nick}**:{logs}"
     await ctx.send(response)
 
+
 @bot.command(
     name='delete',
+    aliases=['del'],
+    usage='attribute#1 attribute#2 ...',
     help="""Delete your character attributes
     You can specify many attributes separating them with spaces
-    If you need to use spaces inside attribute use double quotes outside this attribute
+    If you need to use spaces inside attribute put into into double quotes
+
     You can delete all your attributes using "--all" 
-""",
-    aliases=['del']
+"""
 )
 async def deleteAttribute(ctx, *attributes):
     players = data.getPlayers()
@@ -108,10 +113,12 @@ async def deleteAttribute(ctx, *attributes):
 
 @bot.command(
     name='get',
-    help="""Get your character attributes' value
+    aliases=['g'],
+    usage='attribute#1 attribute#2 ...',
+    help="""Get your character attributes
     You can specify many attributes separating them with spaces
-    Default return all attributes""",
-    aliases=['g']
+    If you need to use spaces inside attribute put it into double quotes
+    No parameter returns all attributes"""
 )
 async def getAttribute(ctx, *attributes):
     players = data.getPlayers()
@@ -135,6 +142,8 @@ async def getAttribute(ctx, *attributes):
         
     response = f"**{ctx.author.nick}**'s attributes:{logs}"
     await ctx.send(response)
+
+
 
 if __name__ == "__main__":
     bot.run(os.getenv('DISCORD_TOKEN'))
